@@ -1,8 +1,11 @@
 import { fetchImages } from "@/lib/fetchImages";
 import type { ImagesResult } from "@/models/image";
 import ImgContainer from "./ImgContainer";
-export default async function Gallery() {
-  const url = "https://api.pexels.com/v1/curated";
+type Props ={
+  topic?: string | undefined
+}
+export default async function Gallery({topic}:Props) {
+  const url = !topic ? "https://api.pexels.com/v1/curated" :`https://api.pexels.com/v1/search?query=${topic}`;
   const images: ImagesResult | undefined = await fetchImages(url);
   if (!images)
     return <h2 className="m-4 text-2xl font-bold">No images found</h2>;
