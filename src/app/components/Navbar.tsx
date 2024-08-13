@@ -9,7 +9,7 @@ export default function Navbar() {
         <Link href={"/"}>
           <h1 className="text-2xl sm:text-3xl text-center whitespace-nowrap capitalize">
             nextjs gallery app
-          </h1>{" "}
+          </h1>
         </Link>
         <Search />
       </nav>

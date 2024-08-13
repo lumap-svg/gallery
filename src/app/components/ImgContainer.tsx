@@ -9,7 +9,7 @@ type Prop = {
 export default function ImgContainer({ photo }: Prop) {
   const widthHeightRatio = photo.height / photo.width;
   const galleryHeight = Math.ceil(250 * widthHeightRatio);
-  const photoSpan = Math.ceil(galleryHeight / 10);
+  const photoSpan = Math.ceil(galleryHeight / 10) + 1;
   return (
     <div
       className="w-[250px] justify-self-center"
