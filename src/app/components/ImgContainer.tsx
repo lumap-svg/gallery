@@ -29,6 +29,9 @@ export default function ImgContainer({ photo }: Prop) {
             className="group-hover:opacity-75"
             alt={photo.alt}
           />
+          {/* <div className="relative hidden group-hover:block bottom-9 p-2 rounded-xl bg-black text-gray-300 bg-opacity-30" >
+            <h2> <span>By</span> {photo.photographer} </h2>
+          </div> */}
         </div>
       </Link>
     </div>
