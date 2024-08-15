@@ -1,17 +1,16 @@
 import {
   resultWithCollectionSchema,
-  collectionWithMediaSchema,
 } from "@/models/collections";
 import type {
-  collection,
   collectionMediaT,
   collectionResult,
 } from "@/models/collections";
 import env from "./env";
+import { fetchCollectionImages } from "./fetchCollectionWithId";
 
-export async function fetchCollection(): Promise<collectionResult | undefined> {
+export async function fetchCollection() :Promise<(collectionMediaT |undefined )[] |undefined>{
   const url = "https://api.pexels.com/v1/collections/featured?per_page=15";
-
+ let sponse:collectionMediaT| undefined;
   try {
     const res = await fetch(url, {
       headers: {
@@ -21,36 +20,25 @@ export async function fetchCollection(): Promise<collectionResult | undefined> {
     if (!res.ok) throw new Error("failed to fetch featured collections");
     const result: collectionResult = await res.json();
     const parsedData = resultWithCollectionSchema.parse(result);
-    if (parsedData.total_results === 0) return;
+    if (parsedData.total_results === 0) {
+      sponse=undefined
+  };
 
     if(parsedData.collections) 
     {
-        const collectiveId = parsedData.collections.map(collection => collection.id)
-        console.log(collectiveId);
-        const resultant = collectiveId.map((id)=> fetchCollectionImages(id))
+        const collectiveIds = parsedData.collections.map(collection => ({id:collection.id,
+          count:collection.photos_count 
+        }))
+        console.log(collectiveIds);
+        console.log("started displaying collection data")
+
+        const fetchImagePromises = collectiveIds.map(collection => fetchCollectionImages(collection.id, collection.count));
+        const imageResults:(collectionMediaT |undefined )[] = await Promise.all(fetchImagePromises);
+  
+        return imageResults
         
-    } 
+      } 
 
-    return parsedData;
-  } catch (e) {
-    if (e instanceof Error) console.log(e.message);
-  }
-}
-// "https://api.pexels.com/v1/collections/9mp14cx?per_page=1&sort=desc"
-
-export async function fetchCollectionImages(id: string) :Promise<collectionMediaT | undefined>{
-  const url = `https://api.pexels.com/v1/collections/${id}?per_page=1&sort=desc`;
-  try {
-    const res = await fetch(url, {
-      headers: { Authorization: env.PEXEL_API_KEY },
-    });
-    if (!res.ok) throw new Error("failled to load images from the collection");
-    const result: collectionMediaT = await res.json();
-    const parsedMedia = collectionWithMediaSchema.parse(result);
-
-    if (parsedMedia.total_results === 0) return undefined;
-    return parsedMedia;
-    
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
   }

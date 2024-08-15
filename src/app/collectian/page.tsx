@@ -1,24 +1,31 @@
-import { fetchCollectionImages, fetchCollection } from "@/lib/fetchCollection";
-import type { collectionResult, collection, collectionMediaT } from "@/models/collections";
+import { fetchCollection } from "@/lib/fetchCollection";
+import type { collectionMediaT, mediaT } from "@/models/collections";
+import Image from "next/image";
+export default async function page() {
+  const collectionsResults :(collectionMediaT | undefined )[] |undefined =  await fetchCollection();
+  console.log(collectionsResults)
+  return (
+  
+    <div className=" grid grid-cols-3">
+      {
+        collectionsResults && collectionsResults.map((collection) => (
+        
+          <div key={collection?.id} className="h-64 bg-black bg-opacity-30 grid grid-cols-5 rounded-xl m-3" >{collection?.media.map(data => <ImageConatiner key={data.id} data ={data} />)}</div>
+        
+        ))
+      }
+    </div>
 
-function collectId(collection: collection[]) {
-  let media:collectionMediaT[]= [];
-  const collectiveId = collection.map((item) => item.id);
-  console.log(collectiveId);
-  collectiveId.map(async (id) => {
-    // const data:collectionMediaT | undefined = fetchCollectionImages(id)
-    // if (data) media.push(data);
-    // console.log(data)
-    await fetchCollectionImages(id)
-  });
-  console.log("collection ready")
-
+    
+  );
+}
+type imgT ={
+  data:mediaT
 }
 
-export default async function page() {
-  const collectionsResults: collectionResult | undefined =
-    await fetchCollection();
-  const collect = collectionsResults?.collections;
-  if (collect) collectId(collect);
-  return <div>page</div>;
+function ImageConatiner ({data}:imgT){
+  return (<div>
+  
+    <Image  priority src={data.src.large} alt={data.alt} height={250} width={250}/>
+  </div> )
 }

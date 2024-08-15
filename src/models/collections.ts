@@ -34,11 +34,14 @@ const mediaSchema = z.object({
   photographer: z.string(),
   photographer_url: z.string(),
   alt: z.string(),
+  src: z.object({
+    large: z.string(),
+  }),
 });
 
-export const  collectionWithMediaSchema = collectionsResultSchema.extend({
-    media:z.array(mediaSchema)
-})
+export const collectionWithMediaSchema = collectionsResultSchema.extend({
+  media: z.array(mediaSchema),
+});
 
-export type collectionMediaT = z.infer<typeof collectionWithMediaSchema >
-export type mediaT = z.infer<typeof mediaSchema>
+export type collectionMediaT = z.infer<typeof collectionWithMediaSchema>;
+export type mediaT = z.infer<typeof mediaSchema>;
